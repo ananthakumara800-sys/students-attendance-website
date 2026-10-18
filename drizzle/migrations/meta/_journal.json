@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792335317491,
+      "tag": "0000_attendance_system",
+      "breakpoints": true
+    }
+  ]
 }
