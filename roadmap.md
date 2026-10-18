@@ -1,4 +1,12 @@
 # Roadmap
 - [x] Recreate Rollcall home page
 - [x] Make sign in / sign up work (Lovable Cloud)
-- [ ] Classes, teacher attendance marking, student records (next step, on request)
+- [x] Database: students, attendance, roles, sample data
+- [x] App shell with sidebar (navy/white/teal)
+- [x] Dashboard, Students pages
+- [ ] Classes: admins create classes, assign teachers, maintain rosters
+- [ ] Mark Attendance by class (teacher sees own classes), save daily record
+- [ ] AI helper: roster + free-text notes -> suggested present/absent for review
+- [ ] Reports (daily/monthly/individual, CSV, <75% warning)
+- [ ] Student "My attendance" page (history + totals)
+- [ ] Settings: profile + admin user roles
