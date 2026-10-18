@@ -30,7 +30,7 @@ function Dashboard() {
   }, [navigate]);
 
   if (!user) return <Shell><p className="py-20 text-muted-foreground">Loading…</p></Shell>;
-  const name = (user.user_metadata?.full_name as string) || user.email;
+  const name = (user.user_metadata?.["full_name"] as string) || user.email;
 
   return (
     <Shell>
