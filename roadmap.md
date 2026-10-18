@@ -1,3 +1,4 @@
 # Roadmap
 - [x] Recreate Rollcall home page
-- [ ] Make sign in / sign up work (Lovable Cloud)
+- [x] Make sign in / sign up work (Lovable Cloud)
+- [ ] Classes, teacher attendance marking, student records (next step, on request)
