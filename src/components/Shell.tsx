@@ -4,7 +4,7 @@ import bg from "@/assets/web-bg.jpg";
 
 export function Shell({ children }: { children: ReactNode }) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="dark relative min-h-screen overflow-hidden bg-background text-foreground">
       <img src={bg} alt="" width={1920} height={1088} className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-70" />
       <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background/70" />
       <div className="relative mx-auto max-w-6xl px-6">
