@@ -1,8 +1,10 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { LayoutDashboard, Users, ClipboardCheck, BarChart3, Settings, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, ClipboardCheck, BarChart3, Settings, LogOut, Menu, X, School } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useMyRole } from "@/lib/role";
+import { Spinner } from "@/components/PageHeader";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -14,19 +16,28 @@ export const Route = createFileRoute("/_authenticated")({
   component: Layout,
 });
 
-const nav = [
+type NavItem = { to: "/dashboard" | "/students" | "/classes" | "/attendance" | "/reports" | "/settings" | "/my-attendance"; label: string; icon: typeof Users };
+const staffNav: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/students", label: "Students", icon: Users },
+  { to: "/classes", label: "Classes", icon: School },
   { to: "/attendance", label: "Mark Attendance", icon: ClipboardCheck },
   { to: "/reports", label: "Attendance Reports", icon: BarChart3 },
   { to: "/settings", label: "Settings", icon: Settings },
-] as const;
+];
+const studentNav: NavItem[] = [
+  { to: "/my-attendance", label: "My Attendance", icon: ClipboardCheck },
+  { to: "/settings", label: "Settings", icon: Settings },
+];
 
 function Layout() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const qc = useQueryClient();
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const me = useMyRole();
+  const role = me.data?.role ?? null;
+  const nav = role === "student" ? studentNav : role ? staffNav : [{ to: "/settings", label: "Settings", icon: Settings } as NavItem];
 
   async function logout() {
     await qc.cancelQueries();
@@ -75,7 +86,14 @@ function Layout() {
           <button aria-label="Open menu" onClick={() => setOpen(true)}><Menu className="h-6 w-6" /></button>
           <span className="font-bold">Rollcall</span>
         </header>
-        <main className="mx-auto max-w-6xl p-4 md:p-8"><Outlet /></main>
+        <main className="mx-auto max-w-6xl p-4 md:p-8">
+          {me.isLoading ? <Spinner /> : !role && !path.startsWith("/settings") ? (
+            <div className="card-surface mx-auto mt-10 max-w-lg p-8 text-center">
+              <h1 className="text-xl font-bold">Waiting for access</h1>
+              <p className="mt-2 text-sm text-muted-foreground">Your account ({me.data?.email}) has no role yet. Ask an administrator to make you a teacher, or to add your email to your student record.</p>
+            </div>
+          ) : <Outlet />}
+        </main>
       </div>
     </div>
   );
