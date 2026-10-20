@@ -113,19 +113,21 @@ function Classes() {
 
       {rosterFor && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-foreground/40 p-4" onClick={() => setRosterFor(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="card-surface flex max-h-[85vh] w-full max-w-lg flex-col p-6">
+          <div onClick={(e) => e.stopPropagation()} className="card-surface flex max-h-[85vh] w-full max-w-2xl flex-col p-6">
+            <p className="mb-3 rounded-lg bg-accent p-3 text-xs text-accent-foreground">Student login: enter a student's email and press Give access. They can then sign up or sign in with that email to see their own attendance.</p>
             <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-bold">Roster · {rosterFor.name}</h2><button onClick={() => setRosterFor(null)}><X className="h-5 w-5" /></button></div>
             <div className="flex-1 space-y-1 overflow-y-auto">
               {(students.data ?? []).filter((s) => isAdmin || roster.some((r) => r.class_id === rosterFor.id && r.student_id === s.id)).map((s) => {
                 const inClass = roster.some((r) => r.class_id === rosterFor.id && r.student_id === s.id);
                 return (
-                  <label key={s.id} className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-muted">
+                  <label key={s.id} className="flex flex-wrap items-center gap-3 rounded-lg px-2 py-2 hover:bg-muted">
                     {isAdmin && <input type="checkbox" checked={inClass} className="h-4 w-4 accent-primary" onChange={() => run(
                       () => inClass ? supabase.from("class_students").delete().eq("class_id", rosterFor.id).eq("student_id", s.id) : supabase.from("class_students").insert({ class_id: rosterFor.id, student_id: s.id }),
                       inClass ? "Removed from class" : "Added to class")} />}
                     <span className="font-mono text-xs text-muted-foreground">{s.roll_number}</span>
                     <span className="text-sm">{s.name}</span>
                     <span className="ml-auto text-xs text-muted-foreground">{s.department} {s.year}-{s.section}</span>
+                    {inClass && (isAdmin || rosterFor.teacher_id === me.data?.userId) && <EmailAccess studentId={s.id} email={s.email} />}
                   </label>
                 );
               })}
@@ -134,5 +136,25 @@ function Classes() {
         </div>
       )}
     </>
+  );
+}
+
+function EmailAccess({ studentId, email }: { studentId: string; email: string | null }) {
+  const qc = useQueryClient();
+  const [value, setValue] = useState(email ?? "");
+  const [busy, setBusy] = useState(false);
+  async function save() {
+    setBusy(true);
+    const { error } = await supabase.rpc("set_student_email", { _student_id: studentId, _email: value });
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success(value ? "Student login access given" : "Student login access removed");
+    qc.invalidateQueries({ queryKey: studentsKey });
+  }
+  return (
+    <span className="flex w-full items-center gap-2 pl-7" onClick={(e) => e.preventDefault()}>
+      <input type="email" placeholder="student@email.com" value={value} onChange={(e) => setValue(e.target.value)} className={`${fieldCls} py-1.5 text-xs`} />
+      <button type="button" onClick={save} disabled={busy || value === (email ?? "")} className={`${btnPrimary} whitespace-nowrap px-3 py-1.5 text-xs`}>{busy ? "Saving…" : email && !value ? "Remove" : "Give access"}</button>
+    </span>
   );
 }

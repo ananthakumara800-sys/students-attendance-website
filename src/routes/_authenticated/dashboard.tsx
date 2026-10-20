@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
+import { useMyRole } from "@/lib/role";
 import { useQuery } from "@tanstack/react-query";
 import { Users, UserCheck, UserX, Percent, ClipboardCheck } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
@@ -12,6 +13,12 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
+  const me = useMyRole();
+  if (me.data?.role === "student") return <Navigate to="/my-attendance" />;
+  return <StaffDashboard />;
+}
+
+function StaffDashboard() {
   const from = new Date(Date.now() - 13 * 864e5).toISOString().slice(0, 10);
   const students = useQuery({ queryKey: studentsKey, queryFn: fetchStudents });
   const att = useQuery({ queryKey: attendanceKey(from), queryFn: () => fetchAttendance(from) });

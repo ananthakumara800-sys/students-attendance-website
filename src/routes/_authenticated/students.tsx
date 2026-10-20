@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Spinner, btnGhost, btnPrimary, fieldCls } from "@/components/PageHeader";
 import { fetchStudents, studentsKey, type Student } from "@/lib/data";
 import { DEPARTMENTS, SECTIONS, YEARS } from "@/lib/attendance";
+import { useMyRole } from "@/lib/role";
 
 export const Route = createFileRoute("/_authenticated/students")({
   head: () => ({ meta: [{ title: "Students — Rollcall" }, { name: "description", content: "Manage student records." }] }),
@@ -18,6 +19,7 @@ const empty: Form = { name: "", roll_number: "", department: "CSE", year: 1, sec
 
 function Students() {
   const qc = useQueryClient();
+  const isAdmin = useMyRole().data?.role === "admin";
   const { data, isLoading, error } = useQuery({ queryKey: studentsKey, queryFn: fetchStudents });
   const [q, setQ] = useState("");
   const [dept, setDept] = useState("");
@@ -51,7 +53,7 @@ function Students() {
   return (
     <>
       <PageHeader title="Students" subtitle={`${data?.length ?? 0} students enrolled`}
-        action={<button className={btnPrimary} onClick={() => { setEditing(null); setForm(empty); }}><Plus className="h-4 w-4" />Add student</button>} />
+        action={isAdmin && <button className={btnPrimary} onClick={() => { setEditing(null); setForm(empty); }}><Plus className="h-4 w-4" />Add student</button>} />
 
       <div className="card-surface mb-4 grid gap-3 p-4 sm:grid-cols-[1fr_auto_auto]">
         <div className="relative">
@@ -76,9 +78,9 @@ function Students() {
                   <td className="px-4 py-3 font-medium">{s.name}{s.is_sample && <span className="ml-2 rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-semibold uppercase text-warning">Sample</span>}</td>
                   <td className="px-4 py-3">{s.department}</td>
                   <td className="px-4 py-3">Year {s.year} · {s.section}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right">{isAdmin && (<>
                     <button aria-label="Edit" className="rounded-lg p-2 hover:bg-accent" onClick={() => { setEditing(s); setForm({ name: s.name, roll_number: s.roll_number, department: s.department, year: s.year, section: s.section }); }}><Pencil className="h-4 w-4" /></button>
-                    <button aria-label="Delete" className="rounded-lg p-2 text-danger hover:bg-danger-soft" onClick={() => confirm(`Delete ${s.name}? Their attendance will also be removed.`) && del.mutate(s.id)}><Trash2 className="h-4 w-4" /></button>
+                    <button aria-label="Delete" className="rounded-lg p-2 text-danger hover:bg-danger-soft" onClick={() => confirm(`Delete ${s.name}? Their attendance will also be removed.`) && del.mutate(s.id)}><Trash2 className="h-4 w-4" /></button></>)}
                   </td>
                 </tr>
               ))}
