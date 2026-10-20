@@ -147,7 +147,7 @@ function EmailAccess({ studentId, email }: { studentId: string; email: string | 
     setBusy(true);
     const { error } = await supabase.rpc("set_student_email", { _student_id: studentId, _email: value });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(value ? "Student login access given" : "Student login access removed");
     qc.invalidateQueries({ queryKey: studentsKey });
   }

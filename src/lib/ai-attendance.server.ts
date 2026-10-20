@@ -5,7 +5,7 @@ export type RosterEntry = { id: string; name: string; roll_number: string };
 export type Suggestion = { student_id: string; status: "present" | "absent"; reason: string };
 
 export async function suggestAttendance(roster: RosterEntry[], notes: string): Promise<Suggestion[]> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env['LOVABLE_API_KEY'];
   if (!apiKey) throw new Error("AI is not configured for this app.");
   const provider = createOpenAI({
     baseURL: "https://ai.gateway.lovable.dev/v1",
@@ -28,7 +28,6 @@ export async function suggestAttendance(roster: RosterEntry[], notes: string): P
         reasoningSummary: "auto",
         store: false,
         include: ["reasoning.encrypted_content"],
-        textFormat: undefined,
       },
     },
   });
