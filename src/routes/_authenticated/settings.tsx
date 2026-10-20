@@ -30,7 +30,7 @@ function SettingsPage() {
 
   async function saveName(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) return toast.error("Name can't be empty.");
+    if (!name.trim()) { toast.error("Name can't be empty."); return; }
     const { error } = await supabase.from("profiles").update({ full_name: name.trim() }).eq("id", me.data!.userId);
     if (error) toast.error(error.message); else toast.success("Profile saved");
   }

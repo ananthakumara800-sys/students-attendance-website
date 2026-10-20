@@ -60,20 +60,20 @@ function MarkAttendance() {
   }, [classId, date, roster]);
 
   async function save() {
-    if (date > today()) return toast.error("You can't mark attendance for a future date.");
+    if (date > today()) { toast.error("You can't mark attendance for a future date."); return; }
     setSaving(true);
-    const rows = roster.map((s) => ({ student_id: s.id, date, status: marks[s.id] ?? "present", marked_by: me.data?.userId }));
+    const rows = roster.map((s) => ({ student_id: s.id, date, status: marks[s.id] ?? "present", marked_by: me.data?.userId ?? null }));
     // upsert on (student_id, date) prevents duplicate entries for the same day
     const { error } = await supabase.from("attendance").upsert(rows, { onConflict: "student_id,date" });
     setSaving(false);
-    if (error) return toast.error(error.message.includes("row-level security") ? "You can only mark attendance for your own classes." : error.message);
+    if (error) { toast.error(error.message.includes("row-level security") ? "You can only mark attendance for your own classes." : error.message); return; }
     setExisting(true);
     toast.success(`Attendance saved for ${rows.length} students`);
     qc.invalidateQueries({ queryKey: ["attendance"] });
   }
 
   async function runAi() {
-    if (!notes.trim()) return toast.error("Write a few notes first, e.g. “Rohan and Priya absent, Meera on leave”.");
+    if (!notes.trim()) { toast.error("Write a few notes first, e.g. “Rohan and Priya absent, Meera on leave”."); return; }
     setAiBusy(true);
     try {
       const { suggestions } = await suggest({ data: { roster: roster.map((s) => ({ id: s.id, name: s.name, roll_number: s.roll_number })), notes } });

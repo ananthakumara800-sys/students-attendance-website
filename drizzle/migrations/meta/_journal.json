@@ -15,6 +15,13 @@
       "when": 1792335484021,
       "tag": "0001_classes_and_student_role",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792498968439,
+      "tag": "0002_teacher_grants_student_access",
+      "breakpoints": true
     }
   ]
 }

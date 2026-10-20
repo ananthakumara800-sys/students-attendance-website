@@ -4,9 +4,11 @@
 - [x] Database: students, attendance, roles, sample data
 - [x] App shell with sidebar (navy/white/teal)
 - [x] Dashboard, Students pages
-- [ ] Classes: admins create classes, assign teachers, maintain rosters
-- [ ] Mark Attendance by class (teacher sees own classes), save daily record
-- [ ] AI helper: roster + free-text notes -> suggested present/absent for review
-- [ ] Reports (daily/monthly/individual, CSV, <75% warning)
-- [ ] Student "My attendance" page (history + totals)
-- [ ] Settings: profile + admin user roles
+- [x] Classes: admins create classes, assign teachers, maintain rosters
+- [x] Mark Attendance by class (teacher sees own classes), save daily record
+- [x] AI helper: roster + free-text notes -> suggested present/absent for review
+- [x] Reports (daily/monthly/individual, CSV, <75% warning)
+- [x] Student "My attendance" page (history + totals)
+- [x] Settings: profile + admin user roles
+- [ ] Class teachers grant student login access (student email on roster)
+- [ ] Verify everything, then publish (make it public)

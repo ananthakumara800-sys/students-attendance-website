@@ -3,7 +3,7 @@ import type { Status } from "./attendance";
 
 export type Student = {
   id: string; name: string; roll_number: string; department: string;
-  year: number; section: string; is_sample: boolean;
+  year: number; section: string; is_sample: boolean; email: string | null;
 };
 export type AttendanceRow = { id: string; student_id: string; date: string; status: Status; created_at: string };
 

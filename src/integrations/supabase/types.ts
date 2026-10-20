@@ -206,6 +206,10 @@ export type Database = {
       }
       is_own_student: { Args: { _student_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      set_student_email: {
+        Args: { _email: string; _student_id: string }
+        Returns: undefined
+      }
       teaches_student: {
         Args: { _student_id: string; _user_id: string }
         Returns: boolean
